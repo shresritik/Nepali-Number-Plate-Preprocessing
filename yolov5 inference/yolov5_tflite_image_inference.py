@@ -36,6 +36,7 @@ def sortFunc(a):
     for i in range(len(a)):
         store += sorted_a[i][3]
     print(store)
+    return store
 
 
 def detect_image(weights, labels, image_url, img_size, conf_thres, iou_thres):
@@ -59,6 +60,7 @@ def detect_image(weights, labels, image_url, img_size, conf_thres, iou_thres):
 
     result_boxes, result_scores, result_class_names = yolov5_tflite_obj.detect(
         normalized_image_array)
+    print("detect_image1", result_boxes)
 
     if len(result_boxes) > 0:
         result_boxes = scale_coords(size, np.array(
@@ -76,25 +78,32 @@ def detect_image(weights, labels, image_url, img_size, conf_thres, iou_thres):
 
         # Line thickness of 1 px
         thickness = 1
-
+        flag = 0
         for i, r in enumerate(result_boxes):
+            if(flag == 0):
+                print("detect_image2")
 
-            org = (int(r[0]), int(r[1]))
-            labelImg = img[int(r[1]):int(r[3]), int(r[0]): int(r[2]), :].copy()
+                org = (int(r[0]), int(r[1]))
+                labelImg = img[int(r[1]):int(r[3]), int(r[0])
+                                   : int(r[2]), :].copy()
 
-            cv2.rectangle(img, (int(r[0]), int(r[1])),
-                          (int(r[2]), int(r[3])), (255, 0, 0), 3)
-            cv2.putText(img, str(result_class_names[i]), (org[0], org[1]+15), font,
-                        fontScale, color, thickness, cv2.LINE_AA)
-            cv2.putText(img, str(int(100*result_scores[i])) + '% ', org, font,
-                        fontScale, color, thickness, cv2.LINE_AA)
-            # result.append(
-            #     {round(r[0], 2): result_class_names[i]})
-            result.append(
-                [round(r[0], 2), round(r[1], 2), int(100*result_scores[i]), result_class_names[i]])
+                cv2.rectangle(img, (int(r[0]), int(r[1])),
+                              (int(r[2]), int(r[3])), (255, 0, 0), 3)
+                cv2.putText(img, str(result_class_names[i]), (org[0], org[1]+15), font,
+                            fontScale, color, thickness, cv2.LINE_AA)
+                cv2.putText(img, str(int(100*result_scores[i])) + '% ', org, font,
+                            fontScale, color, thickness, cv2.LINE_AA)
+                # result.append(
+                #     {round(r[0], 2): result_class_names[i]})
+                result.append(
+                    [round(r[0], 2), round(r[1], 2), int(100*result_scores[i]), result_class_names[i]])
 
-            # cv2.imshow("frame2", labelImg[:, :, ::-1])
-            cv2.imshow("frame", img[:, :, ::-1])
+                # cv2.imshow("frame2", labelImg[:, :, ::-1])
+                print("detect character")
+                cv2.imshow("frame", img[:, :, ::-1])
+                # flag = 1
+                # print("in flag", flag)
+                # break
 
         save_result_filepath = image_url.split(
             '/')[-1].split('.')[0] + 'yolov5_output.jpg'
@@ -109,10 +118,11 @@ def detect_image(weights, labels, image_url, img_size, conf_thres, iou_thres):
         print('FPS:', 1/(end_time-start_time))
         print('Total Time Taken:', end_time-start_time)
         # print(result)
-        sortFunc(result)
+        value = sortFunc(result)
         key = cv2.waitKey(0)
-        if key == 27:  # esc
+        if key == 27 or flag == 1:  # esc
             cv2.destroyAllWindows()
+        return value
 
 
 if __name__ == '__main__':

@@ -4,7 +4,7 @@ import numpy as np
 
 class yolov5_tflite:
 
-    def __init__(self, weights='./models/custom_plate.tflite', labels='./labels/plate.txt', image_size=320, conf_thres=0.3, iou_thres=0.45):
+    def __init__(self, weights='custom_plate.tflite', labels='./labels/plate.txt', image_size=320, conf_thres=0.3, iou_thres=0.45):
 
         self.weights = weights
         self.image_size = image_size
