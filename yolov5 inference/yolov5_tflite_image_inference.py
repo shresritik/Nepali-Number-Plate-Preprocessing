@@ -79,13 +79,14 @@ def detect_image(weights, labels, image_url, img_size, conf_thres, iou_thres):
         # Line thickness of 1 px
         thickness = 1
         flag = 0
+        # last = []
         for i, r in enumerate(result_boxes):
             if(flag == 0):
                 print("detect_image2")
 
                 org = (int(r[0]), int(r[1]))
-                labelImg = img[int(r[1]):int(r[3]), int(r[0])
-                                   : int(r[2]), :].copy()
+                # labelImg = img[int(r[1]):int(r[3]), int(r[0])
+                #                    : int(r[2]), :].copy()
 
                 cv2.rectangle(img, (int(r[0]), int(r[1])),
                               (int(r[2]), int(r[3])), (255, 0, 0), 3)
@@ -93,6 +94,7 @@ def detect_image(weights, labels, image_url, img_size, conf_thres, iou_thres):
                             fontScale, color, thickness, cv2.LINE_AA)
                 cv2.putText(img, str(int(100*result_scores[i])) + '% ', org, font,
                             fontScale, color, thickness, cv2.LINE_AA)
+                # last.append(i)
                 # result.append(
                 #     {round(r[0], 2): result_class_names[i]})
                 result.append(
@@ -101,26 +103,26 @@ def detect_image(weights, labels, image_url, img_size, conf_thres, iou_thres):
                 # cv2.imshow("frame2", labelImg[:, :, ::-1])
                 print("detect character")
                 cv2.imshow("frame", img[:, :, ::-1])
-                # flag = 1
-                # print("in flag", flag)
-                # break
 
+                # print("in flag", flag)
+        # break
+        flag = 1
         save_result_filepath = image_url.split(
             '/')[-1].split('.')[0] + 'yolov5_output.jpg'
-        save_cropped_result_filepath = image_url.split(
-            '/')[-1].split('.')[0] + 'cropped_yolov5_output.jpg'
+        # save_cropped_result_filepath = image_url.split(
+        #     '/')[-1].split('.')[0] + 'cropped_yolov5_output.jpg'
         cv2.imwrite("output/images/"+save_result_filepath, img[:, :, ::-1])
-        cv2.imwrite("output/cropped/"+save_cropped_result_filepath,
-                    labelImg[:, :, ::-1])
+        # cv2.imwrite("output/cropped/"+save_cropped_result_filepath,
+        #             labelImg[:, :, ::-1])
 
         end_time = time.time()
 
         print('FPS:', 1/(end_time-start_time))
         print('Total Time Taken:', end_time-start_time)
         # print(result)
+
         value = sortFunc(result)
-        key = cv2.waitKey(0)
-        if key == 27 or flag == 1:  # esc
+        if flag == 1 or (cv2.waitKey(0) == 27 & 0xFF == ord('q')):
             cv2.destroyAllWindows()
         return value
 

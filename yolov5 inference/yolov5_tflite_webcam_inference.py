@@ -101,6 +101,7 @@ def detect_video(weights, labels, webcam, img_size, conf_thres, iou_thres):
 
     except:
         out.release()
+    cv2.destroyAllWindows()
 
 
 if __name__ == '__main__':
